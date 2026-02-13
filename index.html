@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Samwelli Godrich Mnyone - Portfolio</title>
+    <title>Samweli Godrich Mnyone - Portfolio</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -509,6 +509,15 @@
             }
         }
     </style>
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            // Initialize EmailJS with your Public Key
+            // Get your Public Key from: https://dashboard.emailjs.com/admin/account
+            emailjs.init("YOUR_PUBLIC_KEY"); 
+        })();
+    </script>
 </head>
 <body>
     <!-- Custom Cursor -->
@@ -942,7 +951,7 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-6 mb-4">
+                                <div class="col-lg-5 mb-4 mb-lg-0">
                                     <div class="contact-info-item">
                                         <div class="contact-icon">
                                             <i class="fas fa-envelope"></i>
@@ -952,8 +961,6 @@
                                             <p>samweligodrichmnyone@gmail.com</p>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6 mb-4">
                                     <div class="contact-info-item">
                                         <div class="contact-icon">
                                             <i class="fas fa-phone"></i>
@@ -963,37 +970,38 @@
                                             <p>0758564018</p>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6 mb-4">
                                     <div class="contact-info-item">
                                         <div class="contact-icon">
                                             <i class="fas fa-map-marker-alt"></i>
                                         </div>
                                         <div>
-                                            <h6>Current Address</h6>
-                                            <p>Ubungo External, Dar es Salaam</p>
+                                            <h6>Location</h6>
+                                            <p>Dar es Salaam, Tanzania</p>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-4">
-                                    <div class="contact-info-item">
-                                        <div class="contact-icon">
-                                            <i class="fas fa-home"></i>
+                                <div class="col-lg-7">
+                                    <form id="contact-form">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <input type="text" name="user_name" class="form-control bg-dark text-white border-0 py-3" placeholder="Your Name" required style="background-color: rgba(255, 255, 255, 0.05) !important;">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <input type="email" name="user_email" class="form-control bg-dark text-white border-0 py-3" placeholder="Your Email" required style="background-color: rgba(255, 255, 255, 0.05) !important;">
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h6>Permanent Address</h6>
-                                            <p>Dodoma, Nkhungu</p>
+                                        <div class="mb-3">
+                                            <input type="text" name="subject" class="form-control bg-dark text-white border-0 py-3" placeholder="Subject" required style="background-color: rgba(255, 255, 255, 0.05) !important;">
                                         </div>
-                                    </div>
+                                        <div class="mb-3">
+                                            <textarea name="message" class="form-control bg-dark text-white border-0 py-3" rows="4" placeholder="Your Message" required style="background-color: rgba(255, 255, 255, 0.05) !important;"></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-custom w-100 py-3" id="submit-btn">
+                                            <i class="fas fa-paper-plane me-2"></i>Send Message
+                                        </button>
+                                        <div id="form-status" class="mt-3 text-center" style="display: none;"></div>
+                                    </form>
                                 </div>
-                            </div>
-                            <div class="text-center mt-4">
-                                <a href="mailto:samweligodrichmnyone@gmail.com" class="btn btn-custom btn-lg me-3">
-                                    <i class="fas fa-paper-plane me-2"></i>Send Email
-                                </a>
-                                <a href="tel:0758564018" class="btn btn-outline-light btn-lg">
-                                    <i class="fas fa-phone me-2"></i>Call Now
-                                </a>
                             </div>
                         </div>
                     </div>
@@ -1106,6 +1114,53 @@
                 navbar.style.boxShadow = 'none';
             }
         });
+
+        // EmailJS Form Submission
+        const contactForm = document.getElementById('contact-form');
+        const formStatus = document.getElementById('form-status');
+        const submitBtn = document.getElementById('submit-btn');
+
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                // Change button state
+                const originalBtnContent = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
+
+                // Get form parameters
+                // service_id, template_id, template_params, public_key
+                // Note: Replace "YOUR_SERVICE_ID" and "YOUR_TEMPLATE_ID" with yours
+                emailjs.sendForm('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', this)
+                    .then(function() {
+                        formStatus.style.display = 'block';
+                        formStatus.style.color = '#4ecdc4';
+                        formStatus.style.backgroundColor = 'rgba(78, 205, 196, 0.1)';
+                        formStatus.style.padding = '10px';
+                        formStatus.style.borderRadius = '5px';
+                        formStatus.innerText = 'Message sent successfully!';
+                        contactForm.reset();
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnContent;
+                        
+                        // Hide message after 5 seconds
+                        setTimeout(() => {
+                            formStatus.style.display = 'none';
+                        }, 5000);
+                    }, function(error) {
+                        formStatus.style.display = 'block';
+                        formStatus.style.color = '#ff6b6b';
+                        formStatus.style.backgroundColor = 'rgba(255, 107, 107, 0.1)';
+                        formStatus.style.padding = '10px';
+                        formStatus.style.borderRadius = '5px';
+                        formStatus.innerText = 'Failed to send message. Please try again.';
+                        console.error('EmailJS Error:', error);
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnContent;
+                    });
+            });
+        }
         
         // Animation on scroll
         const animateOnScroll = function() {
